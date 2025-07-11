@@ -1,6 +1,8 @@
 import { gameController } from "./game-controller.js";
 import { displayController } from "./display-controller.js";
 
+import "./style.css";
+
 const runGame = (function () {
   // function log() {
   //   console.log("Round: " + gameController.getRoundNumber());

@@ -52,31 +52,40 @@ const displayController = (function () {
   };
 
   function handleClickSetMarker(e) {
-    const row = parseInt(e.target.dataset.row);
-    const col = parseInt(e.target.dataset.col);
-
-    const cellIsEmpty = gameBoard.getBoard()[row][col] === "";
-
-    if (
-      gameController.getPlayerOne() &&
-      gameController.getPlayerTwo() &&
-      e.target.className === "cell" &&
-      !gameController.gameOverState() &&
-      cellIsEmpty
-      // e.target.textContent === ""
-    ) {
-      gameController.setMarker(row, col);
-      renderBoard();
-      if (gameController.checkRoundResult() === "win") {
-        const winner = gameController.getActivePlayer();
-        winner.addScore();
-        if (gameController.checkGameResult()) {
-          renderAllData();
-          renderMessage(winner.getName() + " is the WINNER!!!");
-          gameController.toggleGameOver();
-          return;
-        } else {
-          renderMessage(winner.getName() + " win!!");
+    if (e.target.className === "cell") {
+      const row = parseInt(e.target.dataset.row);
+      const col = parseInt(e.target.dataset.col);
+      
+      const cellIsEmpty = gameBoard.getBoard()[row][col] === "";
+      
+      if (
+        gameController.getPlayerOne() &&
+        gameController.getPlayerTwo() &&
+        !gameController.gameOverState() &&
+        cellIsEmpty
+        // e.target.textContent === ""
+      ) {
+        gameController.setMarker(row, col);
+        renderBoard();
+        if (gameController.checkRoundResult() === "win") {
+          const winner = gameController.getActivePlayer();
+          winner.addScore();
+          if (gameController.checkGameResult()) {
+            renderAllData();
+            renderMessage(winner.getName() + " is the WINNER!!!");
+            gameController.toggleGameOver();
+            return;
+          } else {
+            renderMessage(winner.getName() + " win!!");
+            setTimeout(() => {
+              resetMessage();
+            }, 1000);
+            gameController.addRound();
+            gameBoard.resetBoard();
+            renderAllData();
+          }
+        } else if (gameController.checkRoundResult() === "tie") {
+          renderMessage("tie");
           setTimeout(() => {
             resetMessage();
           }, 1000);
@@ -84,17 +93,9 @@ const displayController = (function () {
           gameBoard.resetBoard();
           renderAllData();
         }
-      } else if (gameController.checkRoundResult() === "tie") {
-        renderMessage("tie");
-        setTimeout(() => {
-          resetMessage();
-        }, 1000);
-        gameController.addRound();
-        gameBoard.resetBoard();
+        gameController.toggleActivePlayer();
         renderAllData();
       }
-      gameController.toggleActivePlayer();
-      renderAllData();
     }
   }
 
